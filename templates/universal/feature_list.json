@@ -1,0 +1,31 @@
+{
+  "project": "<项目名称>",
+  "last_updated": "<YYYY-MM-DD>",
+  "rules": {
+    "single_active_feature": true,
+    "passing_requires_evidence": true,
+    "do_not_skip_verification": true
+  },
+  "status_legend": {
+    "not_started": "任务还没有开始。",
+    "active": "当前唯一正在进行中的任务。",
+    "blocked": "因为已记录的阻塞问题，当前无法继续推进。",
+    "passing": "要求的验证已经通过，并且证据已经记录。"
+  },
+  "features": [
+    {
+      "id": "feat-001",
+      "priority": 1,
+      "area": "<功能区域>",
+      "title": "<功能标题>",
+      "user_visible_behavior": "<用户可见行为的简短描述>",
+      "status": "not_started",
+      "verification": [
+        "<验证条件 1>",
+        "<验证条件 2>"
+      ],
+      "evidence": [],
+      "notes": "<备注信息>"
+    }
+  ]
+}
