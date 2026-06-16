@@ -29,12 +29,12 @@ if [ -n "$SKILL_FILE" ]; then
   NEED_UNZIP=true
 else
   # === 模式 B：从源码安装（git clone 后） ===
-  if [ -f "${SCRIPT_DIR}/SKILL.md" ]; then
+  if [ -f "${SCRIPT_DIR}/skills/harness-templates/SKILL.md" ]; then
     echo "[✓] 从源码安装: ${SCRIPT_DIR}"
     SOURCE_DIR="$SCRIPT_DIR"
     NEED_UNZIP=false
   else
-    echo "[✗] 找不到 SKILL.md"
+    echo "[✗] 找不到 skills/harness-templates/SKILL.md"
     echo "    请在仓库根目录运行此脚本，或指定 .skill 文件路径"
     exit 1
   fi

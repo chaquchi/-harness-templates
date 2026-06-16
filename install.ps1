@@ -30,13 +30,13 @@ if ($SkillFile -ne "") {
     $NeedUnzip = $true
 } else {
     # === 模式 B：从源码安装（git clone 后） ===
-    $SkillMd = Join-Path $ScriptDir "SKILL.md"
+    $SkillMd = Join-Path $ScriptDir "skills/harness-templates/SKILL.md"
     if (Test-Path $SkillMd) {
         Write-Host "[✓] 从源码安装: $ScriptDir" -ForegroundColor Cyan
         $SourceDir = $ScriptDir
         $NeedUnzip = $false
     } else {
-        Write-Host "[✗] 找不到 SKILL.md" -ForegroundColor Red
+        Write-Host "[✗] 找不到 skills/harness-templates/SKILL.md" -ForegroundColor Red
         Write-Host "    请在仓库根目录运行此脚本，或指定 .skill 文件路径"
         exit 1
     }
