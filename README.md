@@ -78,17 +78,18 @@ Agent 会自动询问项目类型，然后生成对应的四件套。
 
 ```
 harness-templates/
-├── SKILL.md              # Skill 定义
-├── install.sh            # Linux/macOS 安装脚本
-├── install.ps1           # Windows 安装脚本
-└── templates/
-    ├── universal/        # 通用版
-    ├── frontend/         # 前端版
-    ├── backend/          # 后端版
-    ├── desktop/          # 桌面应用版
-    ├── embedded/         # 嵌入式版
-    └── linux-cpp/        # Linux C/C++ 版
-    └── ... (每个 4 件套)
+├── skills/
+│   └── harness-templates/
+│       ├── SKILL.md              # Skill 定义
+│       └── templates/            # 6 套模板
+│           ├── universal/
+│           ├── frontend/
+│           ├── backend/
+│           ├── desktop/
+│           ├── embedded/
+│           └── linux-cpp/
+├── install.sh                    # Linux/macOS 安装脚本
+└── install.ps1                   # Windows 安装脚本
 ```
 
 ## 许可

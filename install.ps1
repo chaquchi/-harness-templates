@@ -58,7 +58,7 @@ if ($NeedUnzip) {
         Write-Host "[✓] 修正目录结构" -ForegroundColor Green
     }
 } else {
-    Copy-Item -Force -Path (Join-Path $SourceDir "SKILL.md") -Destination $CacheDir
+    Copy-Item -Recurse -Force -Path (Join-Path $SourceDir "skills") -Destination $CacheDir
     Copy-Item -Recurse -Force -Path (Join-Path $SourceDir "templates") -Destination $CacheDir
     if (Test-Path (Join-Path $SourceDir "install.sh")) {
         Copy-Item -Force -Path (Join-Path $SourceDir "install.sh") -Destination $CacheDir
