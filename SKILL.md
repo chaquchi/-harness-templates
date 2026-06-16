@@ -83,8 +83,8 @@ Harness 四大组件：
   "hooks": {
     "sessionStart": [
       {
-        "type": "command",
-        "command": "cat AGENTS.md"
+        "type": "prompt",
+        "prompt": "请先读取 AGENTS.md 文件，并严格遵循其中的 Session Start 流程开始工作。如果 AGENTS.md 不存在，正常继续即可。"
       }
     ]
   }
