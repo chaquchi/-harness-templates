@@ -1,52 +1,74 @@
 #!/usr/bin/env sh
 # Harness Templates Skill — 一键安装脚本
-# 用法: ./install.sh [harness-templates.skill 路径]
-#      默认查找当前目录下的 harness-templates.skill
+# 用法: ./install.sh                       从源码安装（git clone 后执行）
+#       ./install.sh harness-templates.skill   从 .skill 文件安装
 
 set -eu
 
-SKILL_FILE="${1:-harness-templates.skill}"
 PLUGIN_NAME="harness-templates"
 PLUGINS_DIR="${HOME}/.claude/plugins"
 CACHE_DIR="${PLUGINS_DIR}/cache/claude-plugins-official/${PLUGIN_NAME}"
 INSTALLED_JSON="${PLUGINS_DIR}/installed_plugins.json"
 TIMESTAMP="$(date -u +%Y-%m-%dT%H:%M:%S.000Z)"
+SKILL_FILE="${1:-}"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "== Harness Templates Skill 安装 =="
 echo ""
 
-# 1. 检查 .skill 文件
-if [ ! -f "$SKILL_FILE" ]; then
-  echo "[✗] 找不到 ${SKILL_FILE}"
-  echo "    请将 .skill 文件放在当前目录，或: $0 <路径>"
-  exit 1
+# 判断安装模式
+if [ -n "$SKILL_FILE" ]; then
+  # === 模式 A：从 .skill 文件安装 ===
+  if [ ! -f "$SKILL_FILE" ]; then
+    echo "[✗] 找不到 ${SKILL_FILE}"
+    echo "    用法: $0 <harness-templates.skill 路径>"
+    exit 1
+  fi
+  echo "[✓] 从 .skill 文件安装: ${SKILL_FILE}"
+  SOURCE_DIR=""
+  NEED_UNZIP=true
+else
+  # === 模式 B：从源码安装（git clone 后） ===
+  if [ -f "${SCRIPT_DIR}/SKILL.md" ]; then
+    echo "[✓] 从源码安装: ${SCRIPT_DIR}"
+    SOURCE_DIR="$SCRIPT_DIR"
+    NEED_UNZIP=false
+  else
+    echo "[✗] 找不到 SKILL.md"
+    echo "    请在仓库根目录运行此脚本，或指定 .skill 文件路径"
+    exit 1
+  fi
 fi
-echo "[✓] 找到 ${SKILL_FILE}"
 
-# 2. 创建插件目录
+# 创建插件目录
 mkdir -p "$CACHE_DIR"
 echo "[✓] 创建目录 ${CACHE_DIR}"
 
-# 3. 解压
-unzip -o "$SKILL_FILE" -d "$CACHE_DIR" > /dev/null
-echo "[✓] 解压完成"
-
-# 4. 处理嵌套目录（.skill 包可能多一层）
-if [ -d "${CACHE_DIR}/${PLUGIN_NAME}" ]; then
-  mv "${CACHE_DIR}/${PLUGIN_NAME}/"* "$CACHE_DIR/" 2>/dev/null || true
-  rmdir "${CACHE_DIR}/${PLUGIN_NAME}" 2>/dev/null || true
-  echo "[✓] 修正目录结构"
+# 复制 / 解压文件
+if $NEED_UNZIP; then
+  unzip -o "$SKILL_FILE" -d "$CACHE_DIR" > /dev/null
+  echo "[✓] 解压完成"
+  # 处理嵌套目录
+  if [ -d "${CACHE_DIR}/${PLUGIN_NAME}" ]; then
+    mv "${CACHE_DIR}/${PLUGIN_NAME}/"* "$CACHE_DIR/" 2>/dev/null || true
+    rmdir "${CACHE_DIR}/${PLUGIN_NAME}" 2>/dev/null || true
+    echo "[✓] 修正目录结构"
+  fi
+else
+  cp -r "${SOURCE_DIR}/SKILL.md" "$CACHE_DIR/"
+  cp -r "${SOURCE_DIR}/templates" "$CACHE_DIR/"
+  cp "${SOURCE_DIR}/install.sh" "$CACHE_DIR/" 2>/dev/null || true
+  cp "${SOURCE_DIR}/install.ps1" "$CACHE_DIR/" 2>/dev/null || true
+  echo "[✓] 复制完成"
 fi
 
-# 5. 注册到 installed_plugins.json
+# 注册到 installed_plugins.json
 if [ -f "$INSTALLED_JSON" ]; then
-  # 检查是否已注册
   if grep -q "\"${PLUGIN_NAME}@" "$INSTALLED_JSON" 2>/dev/null; then
     echo "[!] ${PLUGIN_NAME} 已注册，跳过"
   else
-    # 用 Python 处理 JSON（更可靠）
     python3 -c "
-import json, sys
+import json
 with open('${INSTALLED_JSON}', 'r') as f:
     data = json.load(f)
 data['plugins']['${PLUGIN_NAME}@claude-plugins-official'] = [{
@@ -73,5 +95,4 @@ echo "========================================"
 echo ""
 echo "下一步："
 echo "  1. 重启 Claude Code 或执行 /reload-plugins"
-echo "  2. 在项目中输入 /harness-templates 或"
-echo "     \"帮我配置 Harness 工程\" 即可触发"
+echo "  2. 在项目中输入 \"帮我配置 Harness 工程\" 即可触发"
