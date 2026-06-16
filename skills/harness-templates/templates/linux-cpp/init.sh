@@ -82,7 +82,7 @@ echo "== [7/7] 编译与测试 =="
 if [ -f "CMakeLists.txt" ]; then
   echo "--- CMake 配置 ---"
   mkdir -p build
-  if cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="-Wall -Wextra" 2>/dev/null && cd ..; then
+  if cd build && cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_C_FLAGS="-Wall -Wextra -Werror" -DCMAKE_CXX_FLAGS="-Wall -Wextra -Werror" 2>/dev/null && cd ..; then
     echo "cmake configure: ✓ 通过"
   else
     echo "cmake configure: ✗ 失败"

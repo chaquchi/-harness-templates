@@ -36,8 +36,11 @@ fi
 echo ""
 echo "== [6/7] 依赖安装 =="
 if [ -f "package.json" ]; then
-  if command -v pnpm >/dev/null 2>&1; then
-    pnpm install --silent 2>/dev/null || npm install --silent
+  # 根据 lockfile 选择包管理器，避免产生冲突的 lockfile
+  if [ -f "pnpm-lock.yaml" ] && command -v pnpm >/dev/null 2>&1; then
+    pnpm install --silent
+  elif [ -f "yarn.lock" ] && command -v yarn >/dev/null 2>&1; then
+    yarn install --silent
   else
     npm install --silent
   fi

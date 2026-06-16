@@ -25,7 +25,9 @@
         "生产构建成功（npm run build）",
         "打包成功（npm run package / npm run make）",
         "npm run lint 通过",
-        "npm test 相关测试通过"
+        "单元测试通过",
+        "IPC 通信经 preload 桥接，安全审查通过（如涉及）",
+        "已在目标平台（Windows/macOS/Linux）手动 smoke 验证（如涉及 UI）"
       ],
       "evidence": [],
       "notes": ""

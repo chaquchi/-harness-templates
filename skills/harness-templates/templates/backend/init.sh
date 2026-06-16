@@ -93,7 +93,7 @@ elif [ -f "package.json" ]; then
   fi
 elif [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ]; then
   echo "--- 语法检查 ---"
-  if python3 -m py_compile *.py 2>/dev/null || python -m py_compile *.py 2>/dev/null; then
+  if python3 -m compileall . -q 2>/dev/null || python -m compileall . -q 2>/dev/null; then
     echo "syntax: ✓ 通过"
   else
     echo "syntax: ✗ 失败"

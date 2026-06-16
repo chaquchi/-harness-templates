@@ -66,32 +66,53 @@ if command -v west >/dev/null 2>&1; then
 fi
 
 echo ""
-echo "== [6/6] 编译验证 =="
+echo "== [6/7] 编译验证 =="
+BUILD_OK=0
 if [ -f "Makefile" ]; then
   echo "--- make 编译 ---"
   if make -j$(nproc 2>/dev/null || echo 4) 2>/dev/null; then
     echo "make: ✓ 通过"
+    BUILD_OK=1
   else
     echo "make: ✗ 失败（可能是工具链或目标平台未配置）"
   fi
 elif [ -f "CMakeLists.txt" ]; then
   echo "--- cmake 编译 ---"
-  if [ -d "build" ]; then
-    cd build && cmake --build . -j$(nproc 2>/dev/null || echo 4) 2>/dev/null && cd ..
-    echo "cmake build: ✓ 通过"
-  else
-    mkdir -p build && cd build && cmake .. 2>/dev/null && cmake --build . -j$(nproc 2>/dev/null || echo 4) 2>/dev/null && cd ..
-    echo "cmake build: ✓ 通过"
-  fi || echo "cmake build: ✗ 失败"
+  # 使用 subshell 防止 cwd 泄漏
+  (
+    if [ ! -d "build" ]; then
+      mkdir -p build
+    fi
+    cd build && cmake .. 2>/dev/null && cmake --build . -j$(nproc 2>/dev/null || echo 4) 2>/dev/null
+  ) && { echo "cmake build: ✓ 通过"; BUILD_OK=1; } || echo "cmake build: ✗ 失败"
 elif [ -f "west.yml" ]; then
   echo "--- west 编译 ---"
   if west build -d build 2>/dev/null; then
     echo "west build: ✓ 通过"
+    BUILD_OK=1
   else
     echo "west build: ✗ 失败"
   fi
 else
   echo "(未检测到 Makefile/CMakeLists.txt/west.yml，跳过编译验证)"
+fi
+
+echo ""
+echo "== [7/7] 单元测试 =="
+if [ "$BUILD_OK" -eq 1 ]; then
+  if [ -f "CMakeLists.txt" ] && [ -f "build/CTestTestfile.cmake" ]; then
+    if (cd build && ctest --output-on-failure 2>/dev/null); then
+      echo "ctest: ✓ 通过"
+    else
+      echo "ctest: ✗ 失败或未配置"
+    fi
+  elif make test 2>/dev/null; then
+    echo "make test: ✓ 通过"
+  else
+    echo "单元测试: ✗ 失败或未配置（请在目标硬件上验证）"
+  fi
+else
+  echo "编译未通过，跳过单元测试"
 fi
 
 echo ""
