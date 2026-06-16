@@ -56,7 +56,6 @@ if $NEED_UNZIP; then
   fi
 else
   cp -r "${SOURCE_DIR}/skills" "$CACHE_DIR/"
-  cp -r "${SOURCE_DIR}/templates" "$CACHE_DIR/"
   cp "${SOURCE_DIR}/install.sh" "$CACHE_DIR/" 2>/dev/null || true
   cp "${SOURCE_DIR}/install.ps1" "$CACHE_DIR/" 2>/dev/null || true
   echo "[✓] 复制完成"
